@@ -3,6 +3,8 @@ const url = 'http://192.168.0.104:7999/api/v1/tasks/';
 const request = new XMLHttpRequest();
 const button = document.querySelector('.btn');
 
+
+
 getTasks();
 
 function getTasks() {
@@ -19,6 +21,7 @@ function getTasks() {
     request.send();
 }
 
+
 function postTask(json) {
 
     request.open('POST', url);
@@ -31,6 +34,17 @@ function postTask(json) {
     }
 
     request.send(json);
+}
+
+function deleteTask(id) {
+    request.open('DELETE', url + id + '/');
+
+    request.onload = () => {
+        const item = document.getElementById(id);
+        item.parentNode.parentNode.removeChild(item.parentNode);
+    }
+
+    request.send();
 }
 
 
@@ -63,22 +77,41 @@ function createList(array) {
 
     const tasksList = array
         .sort((a, b) => a.is_completed - b.is_completed)
-        .map(({text, is_completed}) => {
+        .map(({id, text, is_completed}) => {
             const task = document.createElement('li');
             task.classList.add('list-group-item');
+            task.classList.add('d-flex');
     
             const checkboxElement = document.createElement('input');
             checkboxElement.setAttribute('type', 'checkbox');
             checkboxElement.checked = is_completed;
             checkboxElement.classList.add('form-check-input');
-            checkboxElement.classList.add('me-1');
-    
-            task.append(checkboxElement, text);
+            checkboxElement.classList.add('me-3');
+
+            const deleteButton = document.createElement('a');
+            deleteButton.setAttribute('href', '#');
+            deleteButton.classList.add('ms-auto');
+            deleteButton.setAttribute('id', id);
+
+            const deleteIcon = document.createElement('i');
+            deleteIcon.classList.add('bi');
+            deleteIcon.classList.add('bi-trash-fill');
+
+            deleteButton.append(deleteIcon);
+
+            task.append(checkboxElement, text, deleteButton);
     
             return task;
         });
 
     listElement.append(...tasksList);
+
+    const deleteButtons = document.querySelectorAll('.ms-auto');
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            deleteTask(btn.id);
+        })
+    })
 }
 
 
