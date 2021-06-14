@@ -46,6 +46,19 @@ function deleteTask(id) {
     request.send();
 }
 
+function changeStatus(json, id) {
+    request.open('PATCH', url + id + '/');
+
+    request.setRequestHeader('Content-type','application/json; charset=utf-8');
+
+    request.onload = () => {
+        document.getElementById('list').innerHTML = '';
+        getTasks();
+    }
+
+    request.send(json);
+}
+
 
 button.addEventListener('click', () => {
     const input = document.querySelector('.form-control');
@@ -109,6 +122,16 @@ function createList(array) {
     deleteButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             deleteTask(btn.parentNode.id);
+        })
+    })
+
+    const checkboxItems = document.querySelectorAll('.form-check-input');
+    checkboxItems.forEach(checkboxItem => {
+        checkboxItem.addEventListener('click', () => {
+            let json = JSON.stringify({
+                is_completed: checkboxItem.checked,
+            });
+            changeStatus(json, checkboxItem.parentNode.id)
         })
     })
 }
