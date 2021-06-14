@@ -40,8 +40,7 @@ function deleteTask(id) {
     request.open('DELETE', url + id + '/');
 
     request.onload = () => {
-        const item = document.getElementById(id);
-        item.parentNode.parentNode.removeChild(item.parentNode);
+        document.getElementById(id).remove();
     }
 
     request.send();
@@ -81,6 +80,7 @@ function createList(array) {
             const task = document.createElement('li');
             task.classList.add('list-group-item');
             task.classList.add('d-flex');
+            task.setAttribute('id', id);
     
             const checkboxElement = document.createElement('input');
             checkboxElement.setAttribute('type', 'checkbox');
@@ -91,7 +91,6 @@ function createList(array) {
             const deleteButton = document.createElement('a');
             deleteButton.setAttribute('href', '#');
             deleteButton.classList.add('ms-auto');
-            deleteButton.setAttribute('id', id);
 
             const deleteIcon = document.createElement('i');
             deleteIcon.classList.add('bi');
@@ -109,7 +108,7 @@ function createList(array) {
     const deleteButtons = document.querySelectorAll('.ms-auto');
     deleteButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            deleteTask(btn.id);
+            deleteTask(btn.parentNode.id);
         })
     })
 }
